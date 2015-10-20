@@ -70,21 +70,103 @@ def tinyMazeSearch(problem):
   return  [s,s,w,s,w,w,s,n,n,w,n,n,e]
 
 def depthFirstSearch(problem):
+  "*** YOUR CODE HERE ***"
+  #util.raiseNotDefined()
+  pilha = util.Stack()
+  pilha.push( (problem.getStartState(), [], []) )
+  while not pilha.isEmpty():
+        node, actions, visited = pilha.pop()
+
+        for coord, direction, custo in problem.getSuccessors(node):
+            if not coord in visited:
+                if problem.isGoalState(coord):
+                    return actions + [direction]
+                pilha.push((coord, actions + [direction], visited + [node] ))
+
+  return []
+
+  
+
+def depthaaFirstSearch(problem):
   """
   Search the deepest nodes in the search tree first [p 85].
-
+  
   Your search algorithm needs to return a list of actions that reaches
   the goal.  Make sure to implement a graph search algorithm [Fig. 3.7].
-
+  
   To get started, you might want to try some of these simple commands to
   understand the search problem that is being passed in:
-
+  
   print "Start:", problem.getStartState()
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
   """
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  #print "Start:", problem.getStartState()
+  #print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+  #print "Start's successors:", problem.getSuccessors(problem.getStartState())
+  
+  node = problem.getStartState(); 
+  cutoff = problem.isGoalState(node);
+  sucessors = problem.getSuccessors(node);
+  cutoff_occurred = False
+  	
+  lista = sucessors.pop()
+  dx, dy = lista[0]
+  #dy = lista.pop()
+  print "Start:", node
+  print "Is the start a goal?", cutoff
+  print "Start's successors:", lista[1]
+  node = lista[0]
+  cutoff = problem.isGoalState(node);
+  sucessors = problem.getSuccessors(node);
+  print "Start:", node
+  print "Is the start a goal?", cutoff
+  print "Start's successors:", sucessors
+  depth_limited_search(problem, limit=50)
+  action = [] 
+  action.append(node)
+  action.append(lista[0])
+  teste = (dx, dy)
+  #return action
+  from game import Directions
+
+  s = Directions.SOUTH
+  w = Directions.WEST
+ 
+  #return [s,s,w,s,w,w,s,w]
+  return [Directions.SOUTH,Directions.SOUTH,Directions.WEST,Directions.SOUTH,Directions.WEST,Directions.WEST,Directions.SOUTH,Directions.WEST]
+  
+# util.raiseNotDefined()
+def depth_limited_search(problem, limit=50):
+    "[Fig. 3.17]"
+    cont = 0
+    def recursive_dls(node, problem, limit, cont):
+        if problem.isGoalState(node):
+            cont += 1
+            return node
+        elif len(Stack.list) == limit:
+			return 'cutoff'
+        else:
+            cutoff_occurred = False
+            print "Start:", node
+            sucessors = problem.getSuccessors(node)
+            #lista = sucessors.pop()
+            for child in sucessors.pop():
+				Stack.push(child)
+				result = recursive_dls(child, problem, limit, cont)
+				if result == 'cutoff':
+				   cutoff_occurred = True
+				elif result is not None:
+					return result
+            return if_(cutoff_occurred, 'cutoff', None)
+
+    # Body of depth_limited_search:
+    return recursive_dls(problem.getStartState(), problem, limit, cont)
+
+  #node = problem.getStartState(); 
+  #cutoff = problem.isGoalState(node);
+  #sucessors = problem.getSuccessors(node);
 
 def breadthFirstSearch(problem):
   "Search the shallowest nodes in the search tree first. [p 81]"
@@ -106,7 +188,29 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
   "Search the node that has the lowest combined cost and heuristic first."
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  #util.raiseNotDefined()
+  Lista_fechada = []
+  fila = util.PriorityQueue()
+  start = problem.getStartState()
+  fila.push( (start, []), heuristic(start, problem))
+
+  while not fila.isEmpty():
+        node, actions = fila.pop()
+
+        if problem.isGoalState(node):
+            return actions
+
+        Lista_fechada.append(node)
+
+        for coord, direction, custo in problem.getSuccessors(node):
+            if not coord in Lista_fechada:
+                new_actions = actions + [direction]
+                score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
+                fila.push( (coord, new_actions), score)
+
+  return []
+
+
 
 def temperaSimulada(problem):
 
