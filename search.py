@@ -65,7 +65,9 @@ def tinyMazeSearch(problem):
   from game import Directions
   s = Directions.SOUTH
   w = Directions.WEST
-  return  [s,s,w,s,w,w,s,w]
+  n = Directions.NORTH
+  e = Directions.EAST
+  return  [s,s,w,s,w,w,s,n,n,w,n,n,e]
 
 def depthFirstSearch(problem):
   """
@@ -106,9 +108,16 @@ def aStarSearch(problem, heuristic=nullHeuristic):
   "*** YOUR CODE HERE ***"
   util.raiseNotDefined()
 
-     def temperaSimulada():
+def temperaSimulada(problem):
 
-         util.raiseNotDefined()
+      from game import Directions
+      s = Directions.SOUTH
+      w = Directions.WEST
+      n = Directions.NORTH
+      e = Directions.EAST
+      return  [s,s,w,s,w,w,s,n,n,w,n,n,e]
+
+    #util.raiseNotDefined()
 
 
 
