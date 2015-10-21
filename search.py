@@ -210,6 +210,100 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
   return []
 
+def hillClimbing(problem, heuristic=nullHeuristic):
+  #util.raiseNotDefined()
+  Lista_fechada = []
+  fila = util.PriorityQueue()
+  start = problem.getStartState()
+  fila.push( (start, []), heuristic(start, problem))
+
+  while not fila.isEmpty():
+        node, actions = fila.pop()
+        custo_atual = heuristic(node, problem)
+
+        if problem.isGoalState(node):
+            return actions
+        if problem.getSuccessors(node) == 0:
+			print "OPA!" 
+			return actions
+			
+
+        for coord, direction, custo in problem.getSuccessors(node):
+            custo_vizinho = heuristic(coord, problem)
+            if custo_atual >= custo_vizinho:
+                new_actions = actions + [direction]
+                #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
+                fila.push( (coord, new_actions), custo_vizinho)
+
+  return actions
+
+  """
+	Hill-Climbing(Problema) retorna um estado que é o maximo local
+	EstadoAtual ← FazNó(Problema[EstadoInicial])
+	loop do
+	Vizinho ← SucessorDeMaiorValor(EstadoAtual)
+	se Vizinho[Valor] for menor ou igual EstadoAtual[Valor] então
+		retorna EstadoAtual
+	EstadoAtual ← Vizinho
+	
+	FimVizinho[2] < Atual[2]
+	f hill_climbing(problem):
+    
+    From the initial node, keep choosing the neighbor with highest value,
+    stopping when no neighbor is better. [Fig. 4.2]
+    current = Node(problem.initial)
+    while True:
+        neighbors = current.expand(problem)
+        if not neighbors:
+            break
+        neighbor = argmax_random_tie(neighbors,
+                                     lambda node: problem.value(node.state))
+        if problem.value(neighbor.state) <= problem.value(current.state):
+            break
+        current = neighbor
+    return current.state
+
+	current = problem.getStartState()
+	while True:
+		neighbors = current.getSuccessors(problem)
+		if not neighbors:
+			break
+			
+		neighbor = 
+	
+	Lista_fechada = []
+	fila = util.PriorityQueue()
+	start = problem.getStartState()
+	#Atual = (start, []), heuristic(start, problem)
+	fila.push( (start, []), heuristic(start, problem) )
+	Atual = fila.pop()
+	fila.push(self, Atual)
+	while not fila.isEmpty():
+		Vizinho = fila.pop()
+		
+		if problem.isGoalState(Atual[0]):
+			return node
+		elif Vizinho[2] < Atual[2]:
+			return actions
+        else:
+			Atual = Vizinho
+			
+			Lista_fechada.append(node)
+
+        for coord, direction, custo in problem.getSuccessors(node):
+            if not coord in Lista_fechada:
+                new_actions = actions + [direction]
+                score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
+                Vizinho = ((coord, new_actions), score)
+                fila.push( Vizinho )
+                
+	return []
+	"""
+	
+	
+
+
+
 
 
 def temperaSimulada(problem):
