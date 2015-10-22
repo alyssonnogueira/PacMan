@@ -12,6 +12,7 @@ by Pacman agents (in searchAgents.py).
 """
 
 import util
+import random
 
 class SearchProblem:
   """
@@ -85,18 +86,18 @@ def depthFirstSearch(problem):
 
   return []
 
-  
+
 
 def depthaaFirstSearch(problem):
   """
   Search the deepest nodes in the search tree first [p 85].
-  
+
   Your search algorithm needs to return a list of actions that reaches
   the goal.  Make sure to implement a graph search algorithm [Fig. 3.7].
-  
+
   To get started, you might want to try some of these simple commands to
   understand the search problem that is being passed in:
-  
+
   print "Start:", problem.getStartState()
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
@@ -105,12 +106,12 @@ def depthaaFirstSearch(problem):
   #print "Start:", problem.getStartState()
   #print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   #print "Start's successors:", problem.getSuccessors(problem.getStartState())
-  
-  node = problem.getStartState(); 
+
+  node = problem.getStartState();
   cutoff = problem.isGoalState(node);
   sucessors = problem.getSuccessors(node);
   cutoff_occurred = False
-  	
+
   lista = sucessors.pop()
   dx, dy = lista[0]
   #dy = lista.pop()
@@ -124,7 +125,7 @@ def depthaaFirstSearch(problem):
   print "Is the start a goal?", cutoff
   print "Start's successors:", sucessors
   depth_limited_search(problem, limit=50)
-  action = [] 
+  action = []
   action.append(node)
   action.append(lista[0])
   teste = (dx, dy)
@@ -133,10 +134,10 @@ def depthaaFirstSearch(problem):
 
   s = Directions.SOUTH
   w = Directions.WEST
- 
+
   #return [s,s,w,s,w,w,s,w]
   return [Directions.SOUTH,Directions.SOUTH,Directions.WEST,Directions.SOUTH,Directions.WEST,Directions.WEST,Directions.SOUTH,Directions.WEST]
-  
+
 # util.raiseNotDefined()
 def depth_limited_search(problem, limit=50):
     "[Fig. 3.17]"
@@ -164,7 +165,7 @@ def depth_limited_search(problem, limit=50):
     # Body of depth_limited_search:
     return recursive_dls(problem.getStartState(), problem, limit, cont)
 
-  #node = problem.getStartState(); 
+  #node = problem.getStartState();
   #cutoff = problem.isGoalState(node);
   #sucessors = problem.getSuccessors(node);
 
@@ -224,9 +225,9 @@ def hillClimbing(problem, heuristic=nullHeuristic):
         if problem.isGoalState(node):
             return actions
         if problem.getSuccessors(node) == 0:
-			print "OPA!" 
+			print "OPA!"
 			return actions
-			
+
 
         for coord, direction, custo in problem.getSuccessors(node):
             custo_vizinho = heuristic(coord, problem)
@@ -238,17 +239,17 @@ def hillClimbing(problem, heuristic=nullHeuristic):
   return actions
 
   """
-	Hill-Climbing(Problema) retorna um estado que é o maximo local
-	EstadoAtual ← FazNó(Problema[EstadoInicial])
+	Hill-Climbing(Problema) retorna um estado que e o maximo local
+	EstadoAtual <- FazNao(Problema[EstadoInicial])
 	loop do
-	Vizinho ← SucessorDeMaiorValor(EstadoAtual)
-	se Vizinho[Valor] for menor ou igual EstadoAtual[Valor] então
+	Vizinho <- SucessorDeMaiorValor(EstadoAtual)
+	se Vizinho[Valor] for menor ou igual EstadoAtual[Valor] entao
 		retorna EstadoAtual
-	EstadoAtual ← Vizinho
-	
+	EstadoAtual <- Vizinho
+
 	FimVizinho[2] < Atual[2]
 	f hill_climbing(problem):
-    
+
     From the initial node, keep choosing the neighbor with highest value,
     stopping when no neighbor is better. [Fig. 4.2]
     current = Node(problem.initial)
@@ -268,9 +269,9 @@ def hillClimbing(problem, heuristic=nullHeuristic):
 		neighbors = current.getSuccessors(problem)
 		if not neighbors:
 			break
-			
-		neighbor = 
-	
+
+		neighbor =
+
 	Lista_fechada = []
 	fila = util.PriorityQueue()
 	start = problem.getStartState()
@@ -280,14 +281,14 @@ def hillClimbing(problem, heuristic=nullHeuristic):
 	fila.push(self, Atual)
 	while not fila.isEmpty():
 		Vizinho = fila.pop()
-		
+
 		if problem.isGoalState(Atual[0]):
 			return node
 		elif Vizinho[2] < Atual[2]:
 			return actions
         else:
 			Atual = Vizinho
-			
+
 			Lista_fechada.append(node)
 
         for coord, direction, custo in problem.getSuccessors(node):
@@ -296,26 +297,74 @@ def hillClimbing(problem, heuristic=nullHeuristic):
                 score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
                 Vizinho = ((coord, new_actions), score)
                 fila.push( Vizinho )
-                
+
 	return []
 	"""
-	
-	
 
 
 
 
 
-def temperaSimulada(problem):
 
-      from game import Directions
-      s = Directions.SOUTH
-      w = Directions.WEST
-      n = Directions.NORTH
-      e = Directions.EAST
-      return  [s,s,w,s,w,w,s,n,n,w,n,n,e]
 
-    #util.raiseNotDefined()
+def temperaSimulada(problem, heuristic=nullHeuristic):
+
+    from game import Directions
+
+    s = Directions.SOUTH
+    w = Directions.WEST
+    n = Directions.NORTH
+    e = Directions.EAST
+
+    Lista_fechada = []
+    fila = util.PriorityQueue()
+    start = problem.getStartState()
+    fila.push( (start, []), heuristic(start, problem))
+
+    while not fila.isEmpty():
+          node, actions = fila.pop()
+          custo_atual = heuristic(node, problem)
+
+          if problem.isGoalState(node):
+              return actions
+          if problem.getSuccessors(node) == 0:
+              print "OPA!, pensar"
+              return actions
+
+          i=0
+          vetor = []
+          Lista_fechada.append(node)
+
+          for coord, direction, custo in problem.getSuccessors(node):
+              custo_vizinho = heuristic(coord, problem)
+
+
+              if custo_atual >= custo_vizinho:
+                  new_actions = actions + [direction]
+                  #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
+                  fila.push( (coord, new_actions), custo_vizinho)
+              elif custo_atual < custo_vizinho:
+                  i+=1
+                  #aux
+                  vetor.append((coord,direction))
+                  #print  len(vetor)-1
+                  #print  vetor[random.randint(0, len(vetor)-1)]
+
+                  if i==len(problem.getSuccessors(node)):
+                      oldNode=node
+                      value, new_actions = vetor[random.randint(0, len(vetor)-1)]
+                      while not value in Lista_fechada:
+                          value, new_actions = vetor[random.randint(0, len(vetor)-1)]
+                      #print value
+                      ac = actions+[new_actions]
+
+                      print ac
+                      valor = heuristic(value, problem)
+                      #return ac
+                      fila.push( (value, ac), valor)
+
+
+    return actions
 
 
 
