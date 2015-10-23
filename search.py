@@ -13,6 +13,8 @@ by Pacman agents (in searchAgents.py).
 
 import util
 import random
+import math
+from game import Directions
 
 class SearchProblem:
   """
@@ -233,6 +235,7 @@ def hillClimbing(problem, heuristic=nullHeuristic):
             custo_vizinho = heuristic(coord, problem)
             if custo_atual >= custo_vizinho:
                 new_actions = actions + [direction]
+                print new_actions
                 #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
                 fila.push( (coord, new_actions), custo_vizinho)
 
@@ -309,7 +312,7 @@ def hillClimbing(problem, heuristic=nullHeuristic):
 
 def temperaSimulada(problem, heuristic=nullHeuristic):
 
-    from game import Directions
+
 
     s = Directions.SOUTH
     w = Directions.WEST
@@ -321,51 +324,69 @@ def temperaSimulada(problem, heuristic=nullHeuristic):
     start = problem.getStartState()
     fila.push( (start, []), heuristic(start, problem))
 
-    while not fila.isEmpty():
-          node, actions = fila.pop()
-          custo_atual = heuristic(node, problem)
+    temp = 10000
+    # Cooling rate
+    coolingRate = 0.003
 
-          if problem.isGoalState(node):
-              return actions
-          if problem.getSuccessors(node) == 0:
-              print "OPA!, pensar"
-              return actions
+    while temp>1:
 
-          i=0
-          vetor = []
-          Lista_fechada.append(node)
+        scoreOld=0
+        score=0
+        solucaoAtual=[]
+        solucao=[]
+        melhorSolucao=[]
+        while not fila.isEmpty():
+              print "oi1"
+              node, actions = fila.pop()
+              custo_atual = heuristic(node, problem)
+              solucao=actions
+              scoreOld=custo_atual
+              if problem.isGoalState(node):
+                  print "oi"
+                  return melhorSolucao
+              if problem.getSuccessors(node) == 0:
+                  print "OPA!"
+                  return melhorSolucao
 
-          for coord, direction, custo in problem.getSuccessors(node):
-              custo_vizinho = heuristic(coord, problem)
+              i=0
+              vetor = []
+              #print problem.getSuccessors(node)
 
-
-              if custo_atual >= custo_vizinho:
-                  new_actions = actions + [direction]
-                  #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
-                  fila.push( (coord, new_actions), custo_vizinho)
-              elif custo_atual < custo_vizinho:
+              for coord, direction, custo in problem.getSuccessors(node):
+                  custo_vizinho = heuristic(coord, problem)
+                  pair=coord,direction
+                  vetor.append(pair)
                   i+=1
-                  #aux
-                  vetor.append((coord,direction))
-                  #print  len(vetor)-1
-                  #print  vetor[random.randint(0, len(vetor)-1)]
-
+                  #print "oi 2"
                   if i==len(problem.getSuccessors(node)):
-                      oldNode=node
-                      value, new_actions = vetor[random.randint(0, len(vetor)-1)]
-                      while not value in Lista_fechada:
-                          value, new_actions = vetor[random.randint(0, len(vetor)-1)]
-                      #print value
-                      ac = actions+[new_actions]
+                      #print "oi 3"
+                      valueInfo,direct = vetor[random.randint(0, len(vetor)-1)]
 
-                      print ac
-                      valor = heuristic(value, problem)
-                      #return ac
-                      fila.push( (value, ac), valor)
+                      new_actions = actions + [direct]
+                      solucaoAtual = new_actions
+                      score = heuristic(valueInfo, problem)
+                      #print score
+                      fila.push( (coord, new_actions), custo_vizinho)
 
 
-    return actions
+        if acceptanceProbability(score, scoreOld, temp)>random.random():
+          acoes=solucaoAtual
 
+        if score<scoreOld:
+          melhorSolucao = solucaoAtual
+        print temp
+        temp *= 1-coolingRate
+    print melhorSolucao
+    return melhorSolucao
+
+def acceptanceProbability(energy,newEnergy,temperature):
+        #If the new solution is better, accept it
+        if newEnergy < energy:
+            return 1.0
+
+        #If the new solution is worse, calculate an acceptance probability
+        aux = math.exp((energy - newEnergy) / temperature)
+        return aux
 
 
 # Abbreviations
