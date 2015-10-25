@@ -223,7 +223,7 @@ def hillClimbing(problem, heuristic=nullHeuristic):
   while not fila.isEmpty():
         node, actions = fila.pop()
         custo_atual = heuristic(node, problem)
-
+        #print node
         if problem.isGoalState(node):
             return actions
         if problem.getSuccessors(node) == 0:
@@ -233,11 +233,17 @@ def hillClimbing(problem, heuristic=nullHeuristic):
 
         for coord, direction, custo in problem.getSuccessors(node):
             custo_vizinho = heuristic(coord, problem)
+            i=0
             if custo_atual >= custo_vizinho:
-                new_actions = actions + [direction]
-                print new_actions
-                #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
-                fila.push( (coord, new_actions), custo_vizinho)
+                if i==0:
+                    new_actions = actions + [direction]
+                    #print new_actions
+                    #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
+                    fila.push( (coord, new_actions), custo_vizinho)
+                else:
+                    while i!=0:
+                        i-=1
+                        node, actions = fila.pop()
 
   return actions
 
@@ -313,71 +319,78 @@ def hillClimbing(problem, heuristic=nullHeuristic):
 def temperaSimulada(problem, heuristic=nullHeuristic):
 
 
-
-    s = Directions.SOUTH
-    w = Directions.WEST
-    n = Directions.NORTH
-    e = Directions.EAST
-
     Lista_fechada = []
     fila = util.PriorityQueue()
+    filaAux = util.PriorityQueue()
     start = problem.getStartState()
     fila.push( (start, []), heuristic(start, problem))
 
     temp = 10000
     # Cooling rate
     coolingRate = 0.003
-
-    while temp>1:
-
-        scoreOld=0
-        score=0
-        solucaoAtual=[]
-        solucao=[]
-        melhorSolucao=[]
-        while not fila.isEmpty():
-              print "oi1"
-              node, actions = fila.pop()
-              custo_atual = heuristic(node, problem)
-              solucao=actions
-              scoreOld=custo_atual
-              if problem.isGoalState(node):
-                  print "oi"
-                  return melhorSolucao
-              if problem.getSuccessors(node) == 0:
-                  print "OPA!"
-                  return melhorSolucao
-
-              i=0
-              vetor = []
-              #print problem.getSuccessors(node)
-
-              for coord, direction, custo in problem.getSuccessors(node):
-                  custo_vizinho = heuristic(coord, problem)
-                  pair=coord,direction
-                  vetor.append(pair)
-                  i+=1
-                  #print "oi 2"
-                  if i==len(problem.getSuccessors(node)):
-                      #print "oi 3"
-                      valueInfo,direct = vetor[random.randint(0, len(vetor)-1)]
-
-                      new_actions = actions + [direct]
-                      solucaoAtual = new_actions
-                      score = heuristic(valueInfo, problem)
-                      #print score
-                      fila.push( (coord, new_actions), custo_vizinho)
+    i=0
+    while not fila.isEmpty():
+          node, actions = fila.pop()
+          custo_atual = heuristic(node, problem)
+          #print node
+          if problem.isGoalState(node):
+              return actions
+          if problem.getSuccessors(node) == 0:
+  			print "OPA!"
+  			return actions
 
 
-        if acceptanceProbability(score, scoreOld, temp)>random.random():
-          acoes=solucaoAtual
+          for coord, direction, custo in problem.getSuccessors(node):
+              custo_vizinho = heuristic(coord, problem)
 
-        if score<scoreOld:
-          melhorSolucao = solucaoAtual
-        print temp
-        temp *= 1-coolingRate
-    print melhorSolucao
-    return melhorSolucao
+              if custo_atual >= custo_vizinho:
+                  print "oi 1"
+                  new_actions = actions + [direction]
+                  #print new_actions
+                  #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
+                  fila.push( (coord, new_actions), custo_vizinho)
+              elif temp>1:
+                  temp *= 1-coolingRate
+                  print "oi 2"
+
+                  #retira os empilhados
+                  while i>0:
+                    print "oi 3"
+                    print i
+                    i-=1
+
+                    node, actions = fila.pop()
+
+                  j=0
+                  #print len(problem.getSuccessors(node))-1
+                  rand = random.randint(1, len(problem.getSuccessors(node))-1)
+                  for coord, direction, custo in problem.getSuccessors(node):
+                     custo_vizinho = heuristic(coord, problem)
+                     j+=1
+                     #adiciona apenas o sorteado
+                     if rand==j and acceptanceProbability(heuristic(node, problem),heuristic(coord, problem),temp)>random.random():
+                          new_actions = actions + [direction]
+                          fila.push( (coord, new_actions), custo_vizinho)
+
+          i+=1
+    return actions
+
+def teste(problem, heuristic=nullHeuristic):
+
+
+
+    fila = util.PriorityQueue()
+    start = problem.getStartState()
+    fila.push( (start, []), heuristic(start, problem))
+    node, actions = fila.pop()
+
+    for coord, direction, custo in problem.getSuccessors(node):
+        print problem.getSuccessors(node)
+        if problem.getSuccessors(node) == 0:
+			print "OPA!"
+			#return actions
+
+
 
 def acceptanceProbability(energy,newEnergy,temperature):
         #If the new solution is better, accept it
