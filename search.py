@@ -308,13 +308,6 @@ def hillClimbing(problem, heuristic=nullHeuristic):
                 fila.push( Vizinho )
 
 	return []
-	"""
-
-
-
-
-
-
 
 def temperaSimulada(problem, heuristic=nullHeuristic):
 
@@ -404,6 +397,68 @@ def acceptanceProbability(energy,newEnergy,temperature):
         #If the new solution is worse, calculate an acceptance probability
         aux = math.exp((energy - newEnergy) / temperature)
         return aux
+        """
+
+def shedule(k = 20, lam = 5, limit = 100):
+      return lambda t: if_(t < limit, k * math.exp(-lam * t), 0)
+
+def temperaSimulada(problem, heuristic=nullHeuristic):
+     
+    import math
+    import sys
+    #schedule = exp_schedule()
+    #shedule = hillClimbing()
+    """
+    def simulated_annealing(problem, schedule=exp_schedule()):
+    "[Fig. 4.5]"
+    current = Node(problem.initial)
+    for t in xrange(sys.maxint):
+        T = schedule(t)
+        if T == 0:
+            return current
+        neighbors = current.expand(problem)
+        if not neighbors:
+            return current
+        next = random.choice(neighbors)
+        delta_e = problem.value(next.state) - problem.value(current.state)
+        if delta_e > 0 or probability(math.exp(delta_e/T)):
+            current = next
+    """
+    current = problem.getStartState()
+    actions = []
+    #fila.push( (start, []), heuristic(start, problem))
+    for t in xrange(sys.maxsize):
+        T = shedule(t)
+        if problem.isGoalState(current):
+            return actions
+        if T == 0:
+          return actions
+        neighbors = problem.getSuccessors(current)
+        if not neighbors:
+          return actions 
+        next = random.choice(neighbors)
+        #print  next
+        nodo, direction, custo = next
+        #print nodo
+        delta_e = heuristic(nodo, problem) - heuristic(current, problem)
+        lambda t: if_(t < 200, 20 * math.exp(-5 * t), 0)
+        #if t > 0 :
+        temperatura = math.exp(delta_e/2)
+        #else : 
+        #temperatura = 0
+        if delta_e > 0 or probability(temperatura) :
+          actions = actions + [direction]
+          current = nodo
+
+def probability(temperature):
+        #If the new solution is better, accept it
+        #if newEnergy < energy:
+        #   return True
+
+        #If the new solution is worse, calculate an acceptance probability
+      if temperature > 0.1 :
+        return True
+
 
 
 # Abbreviations
