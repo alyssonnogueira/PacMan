@@ -339,31 +339,35 @@ def temperaSimulada(problem, heuristic=nullHeuristic):
   			print "OPA!"
   			return actions
 
-
+          segur=0
           for coord, direction, custo in problem.getSuccessors(node):
               custo_vizinho = heuristic(coord, problem)
-
+              print "oi 1"
               if custo_atual >= custo_vizinho:
-                  print "oi 1"
+                  #print "oi 1"
                   new_actions = actions + [direction]
                   #print new_actions
                   #score = problem.getCostOfActions(new_actions) + heuristic(coord, problem)
                   fila.push( (coord, new_actions), custo_vizinho)
-              elif temp>1:
+                  segur+=1
+                  #print segur
+                  #print temp
+              elif temp>=1:
+                  #print "oi 2"
                   temp *= 1-coolingRate
-                  print "oi 2"
+                  #print "oi 2"
 
                   #retira os empilhados
-                  while i>0:
-                    print "oi 3"
-                    print i
-                    i-=1
-
-                    node, actions = fila.pop()
+                  if segur>=1:
+                      while i>0:
+                        #print "oi 3"
+                        #print i
+                        i-=1
+                        node, actions = fila.pop()
 
                   j=0
                   #print len(problem.getSuccessors(node))-1
-                  rand = random.randint(1, len(problem.getSuccessors(node))-1)
+                  rand = random.randint(0, len(problem.getSuccessors(node))-1)
                   for coord, direction, custo in problem.getSuccessors(node):
                      custo_vizinho = heuristic(coord, problem)
                      j+=1
